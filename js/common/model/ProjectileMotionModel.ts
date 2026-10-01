@@ -233,7 +233,7 @@ class ProjectileMotionModel implements TModel {
 
     this.fireEnabledProperty = new DerivedProperty( [ this.numberOfMovingProjectilesProperty, this.rapidFireModeProperty ],
       ( numMoving, rapidFireMode ) =>
-        !rapidFireMode && numMoving < this.maxProjectiles, {
+        true, {
         tandem: tandem.createTandem( 'fireEnabledProperty' ),
         phetioDocumentation: `The fire button is only enabled if there are less than ${this.maxProjectiles} projectiles in the air.`,
         phetioValueType: BooleanIO
