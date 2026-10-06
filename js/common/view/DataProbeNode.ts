@@ -166,10 +166,28 @@ class DataProbeNode extends Node {
     const timeReadoutProperty = new StringProperty( noValueString );
     const rangeReadoutProperty = new StringProperty( noValueString );
     const heightReadoutProperty = new StringProperty( noValueString );
+    const horizontalVelocityReadoutProperty = new StringProperty( noValueString );
+    const verticalVelocityReadoutProperty = new StringProperty( noValueString );
+    const totalVelocityReadoutProperty = new StringProperty( noValueString );
 
     const timeBox = createInformationBox( DATA_PROBE_CONTENT_WIDTH, timeString, timeReadoutProperty );
     const rangeBox = createInformationBox( DATA_PROBE_CONTENT_WIDTH, rangeString, rangeReadoutProperty );
     const heightBox = createInformationBox( DATA_PROBE_CONTENT_WIDTH, heightString, heightReadoutProperty );
+    const horizontalVelocityBox = createInformationBox(
+      DATA_PROBE_CONTENT_WIDTH,
+      "Horizontal velocity",
+      horizontalVelocityReadoutProperty
+    );
+    const verticalVelocityBox = createInformationBox(
+      DATA_PROBE_CONTENT_WIDTH,
+      "Vertical velocity",
+      verticalVelocityReadoutProperty
+    );
+    const totalVelocityBox = createInformationBox(
+      DATA_PROBE_CONTENT_WIDTH,
+      "Velocity",
+      totalVelocityReadoutProperty
+    );
 
     const textBox = new VBox( {
       align: 'left',
@@ -177,7 +195,10 @@ class DataProbeNode extends Node {
       children: [
         timeBox,
         rangeBox,
-        heightBox
+        heightBox,
+        horizontalVelocityBox,
+        verticalVelocityBox,
+        totalVelocityBox
       ]
     } );
 
@@ -201,6 +222,18 @@ class DataProbeNode extends Node {
           value: toFixedNumber( point.position.y, 2 ),
           units: mString
         } ) );
+        horizontalVelocityReadoutProperty.set( StringUtils.fillIn( pattern0Value1UnitsWithSpaceString, {
+          value: toFixedNumber( point.horizontalVelocity, 2 ),
+          units: "m/s"
+        } ) );
+        verticalVelocityReadoutProperty.set( StringUtils.fillIn( pattern0Value1UnitsWithSpaceString, {
+          value: toFixedNumber( point.verticalVelocity, 2 ),
+          units: "m/s"
+        } ) );
+        totalVelocityReadoutProperty.set( StringUtils.fillIn( pattern0Value1UnitsWithSpaceString, {
+          value: toFixedNumber( point.totalVelocity, 2 ),
+          units: "m/s"
+        } ) );
         haloNode.centerX = transformProperty.get().modelToViewX( point.position.x );
         haloNode.centerY = transformProperty.get().modelToViewY( point.position.y );
         haloNode.visible = true;
@@ -221,6 +254,9 @@ class DataProbeNode extends Node {
       else {
         timeReadoutProperty.set( noValueString );
         rangeReadoutProperty.set( noValueString );
+        horizontalVelocityReadoutProperty.set( noValueString );
+        verticalVelocityReadoutProperty.set( noValueString );
+        totalVelocityReadoutProperty.set( noValueString );
         heightReadoutProperty.set( noValueString );
         haloNode.visible = false;
       }
