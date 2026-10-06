@@ -201,6 +201,29 @@ class DataProbeNode extends Node {
       ]
     } );
 
+    const pointLeftButton = new ArrowButton( 'left', () => {
+      dataProbe.probeOrientationProperty.value = 'left';
+    }, {
+      arrowHeight: 8,
+      xMargin: 4,
+      yMargin: 3,
+      fireOnHold: false,
+      baseColor: 'white',
+      tandem: options.tandem.createTandem( 'pointLeftButton' ),
+      phetioDocumentation: 'button that points the dataProbe readout to the left of the crosshair'
+    } );
+    const pointRightButton = new ArrowButton( 'right', () => {
+      dataProbe.probeOrientationProperty.value = 'right';
+    }, {
+      arrowHeight: 8,
+      xMargin: 4,
+      yMargin: 3,
+      fireOnHold: false,
+      baseColor: 'white',
+      tandem: options.tandem.createTandem( 'pointRightButton' ),
+      phetioDocumentation: 'button that points the dataProbe readout to the right of the crosshair'
+    } );
+
     // halo node for highlighting the dataPoint whose information is shown in the dataProbe tool
     const smallHaloShape = Shape.circle( 0, 0, SMALL_HALO_RADIUS );
     const largeHaloShape = Shape.circle( 0, 0, LARGE_HALO_RADIUS );
