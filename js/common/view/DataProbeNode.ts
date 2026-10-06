@@ -74,7 +74,7 @@ const GREEN_HALO_FILL = new RadialGradient( 0, 0, 0, 0, 0, SMALL_HALO_RADIUS )
   .addColorStop( 0.4, GREEN_HALO_COLOR )
   .addColorStop( 1, GREEN_HALO_EDGE_COLOR );
 
-const DATA_PROBE_CONTENT_WIDTH = 155;
+const DATA_PROBE_CONTENT_WIDTH = 220;
 const RIGHT_SIDE_PADDING = 6;
 const READOUT_X_MARGIN = ProjectileMotionConstants.RIGHTSIDE_PANEL_OPTIONS.readoutXMargin;
 
@@ -109,7 +109,7 @@ class DataProbeNode extends Node {
       0,
       0,
       DATA_PROBE_CONTENT_WIDTH + RIGHT_SIDE_PADDING,
-      95, {
+      220, {
         cornerRadius: 8,
         fill: OPAQUE_BLUE,
         stroke: 'gray',
@@ -346,7 +346,7 @@ class DataProbeNode extends Node {
       0,
       0,
       DATA_PROBE_CONTENT_WIDTH,
-      95, {
+      170, {
         cornerRadius: 8,
         fill: OPAQUE_BLUE,
         stroke: 'gray',
@@ -420,7 +420,7 @@ class DataProbeNode extends Node {
 function createInformationBox( maxWidth: number, labelString: string, readoutProperty: TReadOnlyProperty<string> ): Node {
 
   // width of white rectangular background, also used for calculating max width
-  const backgroundWidth = 60;
+  const backgroundWidth = 80;
 
   // label
   const labelText = new Text( labelString, combineOptions<TextOptions>( {
