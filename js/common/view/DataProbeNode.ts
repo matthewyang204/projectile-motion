@@ -75,7 +75,7 @@ const GREEN_HALO_FILL = new RadialGradient( 0, 0, 0, 0, 0, SMALL_HALO_RADIUS )
   .addColorStop( 0.4, GREEN_HALO_COLOR )
   .addColorStop( 1, GREEN_HALO_EDGE_COLOR );
 
-const DATA_PROBE_CONTENT_WIDTH = 155;
+const DATA_PROBE_CONTENT_WIDTH = 220;
 const RIGHT_SIDE_PADDING = 6;
 const DATA_PROBE_HEIGHT = 112;
 const EDGE_FLIP_EPSILON = 1e-4;
@@ -112,7 +112,7 @@ class DataProbeNode extends Node {
       0,
       0,
       DATA_PROBE_CONTENT_WIDTH + RIGHT_SIDE_PADDING,
-      DATA_PROBE_HEIGHT, {
+      220, {
         cornerRadius: 8,
         fill: OPAQUE_BLUE,
         stroke: 'gray',
@@ -165,10 +165,28 @@ class DataProbeNode extends Node {
     const timeReadoutProperty = new StringProperty( noValueString );
     const rangeReadoutProperty = new StringProperty( noValueString );
     const heightReadoutProperty = new StringProperty( noValueString );
+    const horizontalVelocityReadoutProperty = new StringProperty( noValueString );
+    const verticalVelocityReadoutProperty = new StringProperty( noValueString );
+    const totalVelocityReadoutProperty = new StringProperty( noValueString );
 
     const timeBox = createInformationBox( DATA_PROBE_CONTENT_WIDTH, timeString, timeReadoutProperty );
     const rangeBox = createInformationBox( DATA_PROBE_CONTENT_WIDTH, rangeString, rangeReadoutProperty );
     const heightBox = createInformationBox( DATA_PROBE_CONTENT_WIDTH, heightString, heightReadoutProperty );
+    const horizontalVelocityBox = createInformationBox(
+      DATA_PROBE_CONTENT_WIDTH,
+      "Horizontal velocity",
+      horizontalVelocityReadoutProperty
+    );
+    const verticalVelocityBox = createInformationBox(
+      DATA_PROBE_CONTENT_WIDTH,
+      "Vertical velocity",
+      verticalVelocityReadoutProperty
+    );
+    const totalVelocityBox = createInformationBox(
+      DATA_PROBE_CONTENT_WIDTH,
+      "Velocity",
+      totalVelocityReadoutProperty
+    );
 
     const textBox = new VBox( {
       align: 'left',
@@ -176,31 +194,11 @@ class DataProbeNode extends Node {
       children: [
         timeBox,
         rangeBox,
-        heightBox
+        heightBox,
+        horizontalVelocityBox,
+        verticalVelocityBox,
+        totalVelocityBox
       ]
-    } );
-
-    const pointLeftButton = new ArrowButton( 'left', () => {
-      dataProbe.probeOrientationProperty.value = 'left';
-    }, {
-      arrowHeight: 8,
-      xMargin: 4,
-      yMargin: 3,
-      fireOnHold: false,
-      baseColor: 'white',
-      tandem: options.tandem.createTandem( 'pointLeftButton' ),
-      phetioDocumentation: 'button that points the dataProbe readout to the left of the crosshair'
-    } );
-    const pointRightButton = new ArrowButton( 'right', () => {
-      dataProbe.probeOrientationProperty.value = 'right';
-    }, {
-      arrowHeight: 8,
-      xMargin: 4,
-      yMargin: 3,
-      fireOnHold: false,
-      baseColor: 'white',
-      tandem: options.tandem.createTandem( 'pointRightButton' ),
-      phetioDocumentation: 'button that points the dataProbe readout to the right of the crosshair'
     } );
 
     // halo node for highlighting the dataPoint whose information is shown in the dataProbe tool
@@ -223,6 +221,18 @@ class DataProbeNode extends Node {
           value: toFixedNumber( point.position.y, 2 ),
           units: mString
         } ) );
+        horizontalVelocityReadoutProperty.set( StringUtils.fillIn( pattern0Value1UnitsWithSpaceString, {
+          value: toFixedNumber( point.horizontalVelocity, 2 ),
+          units: "m/s"
+        } ) );
+        verticalVelocityReadoutProperty.set( StringUtils.fillIn( pattern0Value1UnitsWithSpaceString, {
+          value: toFixedNumber( point.verticalVelocity, 2 ),
+          units: "m/s"
+        } ) );
+        totalVelocityReadoutProperty.set( StringUtils.fillIn( pattern0Value1UnitsWithSpaceString, {
+          value: toFixedNumber( point.totalVelocity, 2 ),
+          units: "m/s"
+        } ) );
         haloNode.centerX = transformProperty.get().modelToViewX( point.position.x );
         haloNode.centerY = transformProperty.get().modelToViewY( point.position.y );
         haloNode.visible = true;
@@ -243,6 +253,9 @@ class DataProbeNode extends Node {
       else {
         timeReadoutProperty.set( noValueString );
         rangeReadoutProperty.set( noValueString );
+        horizontalVelocityReadoutProperty.set( noValueString );
+        verticalVelocityReadoutProperty.set( noValueString );
+        totalVelocityReadoutProperty.set( noValueString );
         heightReadoutProperty.set( noValueString );
         haloNode.visible = false;
       }
@@ -412,7 +425,7 @@ class DataProbeNode extends Node {
       0,
       0,
       DATA_PROBE_CONTENT_WIDTH,
-      95, {
+      170, {
         cornerRadius: 8,
         fill: OPAQUE_BLUE,
         stroke: 'gray',
@@ -486,7 +499,7 @@ class DataProbeNode extends Node {
 function createInformationBox( maxWidth: number, labelString: string, readoutProperty: TReadOnlyProperty<string> ): Node {
 
   // width of white rectangular background, also used for calculating max width
-  const backgroundWidth = 60;
+  const backgroundWidth = 80;
 
   // label
   const labelText = new Text( labelString, combineOptions<TextOptions>( {

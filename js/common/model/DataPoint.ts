@@ -25,6 +25,9 @@ export type DataPointStateObject = {
   position: Vector2StateObject;
   airDensity: number;
   velocity: Vector2StateObject;
+  horizontalVelocity: Vector2StateObject;
+  verticalVelocity: Vector2StateObject;
+  totalVelocity:Vector2StateObject;
   acceleration: Vector2StateObject;
   dragForce: Vector2StateObject;
   forceGravity: number;
@@ -37,6 +40,9 @@ class DataPoint {
   public readonly position: Vector2;
   public readonly airDensity: number;
   public readonly velocity: Vector2;
+  public readonly horizontalVelocity: number;
+  public readonly verticalVelocity: number;
+  public readonly totalVelocity: number;
   public readonly acceleration: Vector2;
   public readonly dragForce: Vector2;
   public readonly forceGravity: number;
@@ -47,7 +53,7 @@ class DataPoint {
    * @param time - total time since fire at this point on the trajectory, in s
    * @param position - position of the data point, with x and y, also called range and height, in m
    * @param airDensity - air density of the atmosphere at this point, in kg/cu m
-   * @param velocity - velocity at this point, magnitude in m/s
+   * @param velocity - velocity at this point, in m/s
    * @param acceleration - acceleration at this point, magnitude in m/s^2
    * @param dragForce - drag force at this point, magnitude in N
    * @param forceGravity - force of gravity, in N
@@ -66,6 +72,9 @@ class DataPoint {
     this.position = position;
     this.airDensity = airDensity;
     this.velocity = velocity;
+    this.horizontalVelocity = velocity.x;
+    this.verticalVelocity = velocity.y;
+    this.totalVelocity = velocity.magnitude;
     this.acceleration = acceleration;
     this.dragForce = dragForce;
     this.forceGravity = forceGravity;
@@ -102,6 +111,9 @@ class DataPoint {
       position: Vector2.Vector2IO,
       airDensity: NumberIO,
       velocity: Vector2.Vector2IO,
+      horizontalVelocity: Vector2.Vector2IO,
+      verticalVelocity: Vector2.Vector2IO1D,
+      totalVelocity: Vector2.Vector2IO1D,
       acceleration: Vector2.Vector2IO,
       dragForce: Vector2.Vector2IO,
       forceGravity: NumberIO,
@@ -135,7 +147,10 @@ class DataPoint {
                    '<li>time (seconds): The time of the data point</li>' +
                    '<li>position (meters): the position of the point in model coordinates</li>' +
                    '<li>airDensity (kg/m^3): the air density when the point was collected</li>' +
-                   '<li>velocity (m/s): the velocity of the projectile at the time when the point was collected</li>' +
+                   '<li>velocity (m/s): the velocity vector of the projectile at the time when the point was collected</li>' +
+                   '<li>horizontalVelocity (m/s): the horizontal component of the projectile velocity</li>' +
+                   '<li>verticalVelocity (m/s): the vertical component of the projectile velocity</li>' +
+                   '<li>totalVelocity (m/s): the magnitude of the projectile velocity</li>' +
                    '<li>acceleration (m/s^2): the acceleration of the projectile at the time when the point was collected</li>' +
                    '<li>dragForce (newtons): the acceleration of the projectile at the time when the point was collected</li>' +
                    '<li>forceGravity (newtons): the acceleration of the projectile at the time when the point was collected</li>' +
