@@ -25,9 +25,9 @@ export type DataPointStateObject = {
   position: Vector2StateObject;
   airDensity: number;
   velocity: Vector2StateObject;
-  horizontalVelocity: number;
-  verticalVelocity: number;
-  totalVelocity: number;
+  horizontalVelocity: Vector2StateObject;
+  verticalVelocity: Vector2StateObject;
+  totalVelocity:Vector2StateObject;
   acceleration: Vector2StateObject;
   dragForce: Vector2StateObject;
   forceGravity: number;
@@ -111,9 +111,9 @@ class DataPoint {
       position: Vector2.Vector2IO,
       airDensity: NumberIO,
       velocity: Vector2.Vector2IO,
-      horizontalVelocity: NumberIO,
-      verticalVelocity: NumberIO,
-      totalVelocity: NumberIO,
+      horizontalVelocity: Vector2.Vector2IO,
+      verticalVelocity: Vector2.Vector2IO1D,
+      totalVelocity: Vector2.Vector2IO1D,
       acceleration: Vector2.Vector2IO,
       dragForce: Vector2.Vector2IO,
       forceGravity: NumberIO,
