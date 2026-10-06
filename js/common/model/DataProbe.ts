@@ -30,6 +30,7 @@ type ProbeOrientation = typeof PROBE_ORIENTATION_VALUES[ number ];
 
 class DataProbe {
   public readonly positionProperty: Property<Vector2>;
+  public readonly readoutPositionProperty: Property<Vector2>;
   public readonly dataPointProperty: Property<null | DataPoint>;
   public readonly isActiveProperty: Property<boolean>;
   public readonly probeOrientationProperty: StringUnionProperty<ProbeOrientation>;
@@ -52,7 +53,13 @@ class DataProbe {
     this.positionProperty = new Vector2Property( new Vector2( dataProbeX, dataProbeY ), {
       tandem: tandem.createTandem( 'positionProperty' ),
       units: 'm',
-      phetioDocumentation: 'The position of the dataProbe in model coordinates, in meters.'
+      phetioDocumentation: 'The position of the dataProbe sampler in model coordinates, in meters.'
+    } );
+
+    this.readoutPositionProperty = new Vector2Property( new Vector2( dataProbeX, dataProbeY ), {
+      tandem: tandem.createTandem( 'readoutPositionProperty' ),
+      units: 'm',
+      phetioDocumentation: 'The anchored position of the dataProbe readout in model coordinates, in meters.'
     } );
 
     this.dataPointProperty = new Property<null | DataPoint>( null, {
@@ -86,6 +93,7 @@ class DataProbe {
    */
   public reset(): void {
     this.positionProperty.reset();
+    this.readoutPositionProperty.reset();
     this.dataPointProperty.reset();
     this.isActiveProperty.reset();
     this.probeOrientationProperty.reset();
