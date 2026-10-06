@@ -45,6 +45,7 @@ const noValueString = MathSymbols.NO_VALUE;
 
 // constants
 const CIRCLE_AROUND_CROSSHAIR_RADIUS = 15; // view units, will not be transformed
+const CROSSHAIR_TO_READOUT_GAP = CIRCLE_AROUND_CROSSHAIR_RADIUS * 1.4;
 const OPAQUE_BLUE = 'rgb( 41, 66, 150 )';
 const TRANSPARENT_WHITE = 'rgba( 255, 255, 255, 0.2 )';
 const SPACING = 4; // {number} x and y spacing and margins
@@ -87,6 +88,7 @@ type DataProbeNodeOptions = SelfOptions & NodeOptions;
 class DataProbeNode extends Node {
   public readonly isUserControlledProperty: TProperty<boolean>; // is this being handled by user?
   public readonly dragListener: DragListener;
+  public readonly dragListenerTarget: Node;
 
   private readonly dataProbe: DataProbe;
   private readonly probeOrigin: Vector2; // where the crosshairs cross
@@ -140,25 +142,47 @@ class DataProbeNode extends Node {
       fill: TRANSPARENT_WHITE
     } );
 
-    // Create the base of the crosshair
-    const crosshairMount = new Rectangle(
-      0,
-      0,
-      0.4 * CIRCLE_AROUND_CROSSHAIR_RADIUS,
-      0.4 * CIRCLE_AROUND_CROSSHAIR_RADIUS,
-      { fill: 'gray' }
-    );
-
     const dragBoundsProperty = new Property( transformProperty.get().viewToModelBounds( screenView.visibleBoundsProperty.get() ) );
+    const samplerDragBoundsProperty = new Property( transformProperty.get().viewToModelBounds(
+      screenView.visibleBoundsProperty.get().eroded( CIRCLE_AROUND_CROSSHAIR_RADIUS )
+    ) );
+    let isReadoutUserControlled = false;
+    let previousReadoutPosition = dataProbe.readoutPositionProperty.value;
 
     this.dragListener = new DragListener( {
-      positionProperty: dataProbe.positionProperty,
+      positionProperty: dataProbe.readoutPositionProperty,
       transform: transformProperty,
       dragBoundsProperty: dragBoundsProperty,
       useParentOffset: true,
+      start: () => {
+        isReadoutUserControlled = true;
+        previousReadoutPosition = dataProbe.readoutPositionProperty.value;
+        this.isUserControlledProperty.set( true );
+      },
+      end: () => {
+        isReadoutUserControlled = false;
+        this.isUserControlledProperty.set( false );
+      },
+      tandem: options.tandem.createTandem( 'dragListener' )
+    } );
+    this.dragListenerTarget = rectangle;
+
+    dataProbe.readoutPositionProperty.link( readoutPosition => {
+      if ( isReadoutUserControlled ) {
+        const delta = readoutPosition.minus( previousReadoutPosition );
+        dataProbe.positionProperty.value = dataProbe.positionProperty.value.plus( delta );
+      }
+      previousReadoutPosition = readoutPosition;
+    } );
+
+    const samplerDragListener = new DragListener( {
+      positionProperty: dataProbe.positionProperty,
+      transform: transformProperty,
+      dragBoundsProperty: samplerDragBoundsProperty,
+      useParentOffset: true,
       start: () => this.isUserControlledProperty.set( true ),
       end: () => this.isUserControlledProperty.set( false ),
-      tandem: options.tandem.createTandem( 'dragListener' )
+      tandem: options.tandem.createTandem( 'samplerDragListener' )
     } );
 
     // label and values readouts
@@ -199,6 +223,12 @@ class DataProbeNode extends Node {
         verticalVelocityBox,
         totalVelocityBox
       ]
+    } );
+
+    const connectorNode = new Path( new Shape(), {
+      stroke: 'gray',
+      lineWidth: 3,
+      pickable: false
     } );
 
     const pointLeftButton = new ArrowButton( 'left', () => {
@@ -287,21 +317,19 @@ class DataProbeNode extends Node {
     // function align positions, and update model.
     const updatePosition = ( position: Vector2 ) => {
       this.probeOrigin.set( transformProperty.get().modelToViewPosition( position ) );
+      const readoutViewPosition = transformProperty.get().modelToViewPosition( dataProbe.readoutPositionProperty.value );
 
       crosshair.center = this.probeOrigin;
       circle.center = this.probeOrigin;
-      crosshairMount.centerY = this.probeOrigin.y;
-      rectangle.centerY = this.probeOrigin.y;
+      rectangle.centerY = readoutViewPosition.y;
       if ( dataProbe.probeOrientationProperty.value === 'right' ) {
-        crosshairMount.left = this.probeOrigin.x + CIRCLE_AROUND_CROSSHAIR_RADIUS;
-        rectangle.left = crosshairMount.right;
+        rectangle.left = readoutViewPosition.x + CROSSHAIR_TO_READOUT_GAP;
         textBox.left = rectangle.left + 2 * SPACING;
         pointLeftButton.right = rectangle.right - SPACING;
         pointRightButton.right = rectangle.right - SPACING;
       }
       else {
-        crosshairMount.right = this.probeOrigin.x - CIRCLE_AROUND_CROSSHAIR_RADIUS;
-        rectangle.right = crosshairMount.left;
+        rectangle.right = readoutViewPosition.x - CROSSHAIR_TO_READOUT_GAP;
         textBox.left = rectangle.left + 2 * SPACING;
         pointLeftButton.left = rectangle.left + SPACING;
         pointRightButton.left = rectangle.left + SPACING;
@@ -310,6 +338,12 @@ class DataProbeNode extends Node {
       textBox.top = rectangle.top + 3 * SPACING + pointLeftButton.height;
       pointLeftButton.top = rectangle.top + SPACING;
       pointRightButton.top = rectangle.top + SPACING;
+      connectorNode.shape = new Shape()
+        .moveTo( this.probeOrigin.x, this.probeOrigin.y )
+        .lineTo(
+          dataProbe.probeOrientationProperty.value === 'right' ? rectangle.left : rectangle.right,
+          rectangle.centerY
+        );
 
       const dataPoint = dataProbe.dataPointProperty.get();
       if ( dataPoint ) {
@@ -320,7 +354,7 @@ class DataProbeNode extends Node {
 
     const getViewDragBounds = () => {
       const visibleBounds = screenView.visibleBoundsProperty.get();
-      const dataProbeWidth = rectangle.width + crosshairMount.width + 2 * CIRCLE_AROUND_CROSSHAIR_RADIUS;
+      const dataProbeWidth = rectangle.width + CROSSHAIR_TO_READOUT_GAP + CIRCLE_AROUND_CROSSHAIR_RADIUS;
       const dataProbeHalfHeight = Math.max( rectangle.height / 2, CIRCLE_AROUND_CROSSHAIR_RADIUS );
       return dataProbe.probeOrientationProperty.value === 'right' ?
              new Bounds2(
@@ -342,8 +376,14 @@ class DataProbeNode extends Node {
       dragBoundsProperty.value = transformProperty.get().viewToModelBounds( viewDragBounds );
     };
 
+    const updateSamplerDragBounds = () => {
+      samplerDragBoundsProperty.value = transformProperty.get().viewToModelBounds(
+        screenView.visibleBoundsProperty.get().eroded( CIRCLE_AROUND_CROSSHAIR_RADIUS )
+      );
+    };
+
     const updateOrientationForCanvasEdge = () => {
-      const viewPosition = transformProperty.get().modelToViewPosition( dataProbe.positionProperty.value );
+      const viewPosition = transformProperty.get().modelToViewPosition( dataProbe.readoutPositionProperty.value );
       const viewDragBounds = getViewDragBounds();
 
       if ( viewDragBounds.minX <= viewDragBounds.maxX &&
@@ -360,7 +400,6 @@ class DataProbeNode extends Node {
 
     const getDataProbeViewBounds = () => Bounds2.point( this.probeOrigin.x, this.probeOrigin.y )
       .includeBounds( circle.bounds )
-      .includeBounds( crosshairMount.bounds )
       .includeBounds( rectangle.bounds );
 
     const returnToToolboxIfOutsideCanvas = () => {
@@ -374,6 +413,7 @@ class DataProbeNode extends Node {
     // Observe changes in the modelViewTransform and update/adjust positions accordingly
     transformProperty.link( transform => {
       updateDragBounds();
+      updateSamplerDragBounds();
       updatePosition( dataProbe.positionProperty.get() );
       returnToToolboxIfOutsideCanvas();
     } );
@@ -381,6 +421,7 @@ class DataProbeNode extends Node {
     // Observe changes in the visible bounds and update drag bounds and adjust positions accordingly
     screenView.visibleBoundsProperty.link( () => {
       updateDragBounds();
+      updateSamplerDragBounds();
       updatePosition( dataProbe.positionProperty.get() );
       returnToToolboxIfOutsideCanvas();
     } );
@@ -391,6 +432,12 @@ class DataProbeNode extends Node {
       updateDragBounds();
       updateOrientationForCanvasEdge();
       updatePosition( dataProbe.positionProperty.get() );
+    } );
+
+    dataProbe.readoutPositionProperty.link( readoutPosition => {
+      updateOrientationForCanvasEdge();
+      updatePosition( dataProbe.positionProperty.get() );
+      this.dataProbe.updateData();
     } );
 
     // Listen for position changes, align positions, and update model.
@@ -404,7 +451,7 @@ class DataProbeNode extends Node {
     assert && assert( !options.children, 'this type sets its own children' );
     options.children = [
       haloNode,
-      crosshairMount,
+      connectorNode,
       rectangle,
       pointLeftButton,
       pointRightButton,
@@ -415,8 +462,10 @@ class DataProbeNode extends Node {
 
     this.mutate( options );
 
-    // When dragging, move the dataProbe tool
-    this.addInputListener( this.dragListener );
+    rectangle.addInputListener( this.dragListener );
+    textBox.addInputListener( this.dragListener );
+    circle.addInputListener( samplerDragListener );
+    crosshair.addInputListener( samplerDragListener );
 
     // visibility of the dataProbe
     dataProbe.isActiveProperty.link( active => {
@@ -430,7 +479,8 @@ class DataProbeNode extends Node {
    * Get the bounds of just the dataProbe, excluding the halo node
    */
   public getJustDataProbeBounds(): Bounds2 {
-    const dataProbeBounds = Bounds2.point( this.probeOrigin.x, this.probeOrigin.y );
+    const dataProbeBounds = Bounds2.point( this.probeOrigin.x, this.probeOrigin.y )
+      .includeBounds( this.globalToParentBounds( this.rectangle.getGlobalBounds() ) );
 
     // include every child except for the halo in the calculations of dataProbe bounds
     for ( let i = 1; i < this.children.length; i++ ) {
