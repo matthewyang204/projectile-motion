@@ -12,12 +12,12 @@ published version,
 run "Projectile Motion".</a>
 
 <a href="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_en.html" target="_blank">
-<img src="https://raw.githubusercontent.com/phetsims/projectile-motion/main/assets/projectile-motion-screenshot.png" alt="Screenshot" style="width: 400px;"/>
+<img src="https://raw.githubusercontent.com/phetsimsbackup204/projectile-motion/main/assets/projectile-motion-screenshot.png" alt="Screenshot" style="width: 400px;"/>
 </a>
 
 ### Documentation
 
-The <a href="https://github.com/phetsims/phet-info/blob/main/doc/phet-development-overview.md" target="_blank">PhET
+The <a href="https://github.com/phetsimsbackup204/phet-info/blob/main/doc/phet-development-overview.md" target="_blank">PhET
 Development Overview</a> is the most complete guide to PhET Simulation Development. This guide includes how to obtain
 simulation code and its dependencies, notes about architecture & design, how to test and build the sims, as well as
 other important information.
@@ -27,9 +27,28 @@ other important information.
 (1) Clone the simulation and its dependencies:
 
 ```
-git clone https://github.com/matthewyang204/phetsims-buildfolder.git phetsims
-cd phetsims
-git clone https://github.com/matthewyang204/projectile-motion.git
+git clone https://github.com/phetsimsbackup204/assert.git
+git clone https://github.com/phetsimsbackup204/axon.git
+git clone https://github.com/phetsimsbackup204/babel.git
+git clone https://github.com/phetsimsbackup204/brand.git
+git clone https://github.com/phetsimsbackup204/chipper.git
+git clone https://github.com/phetsimsbackup204/dot.git
+git clone https://github.com/phetsimsbackup204/joist.git
+git clone https://github.com/phetsimsbackup204/kite.git
+git clone https://github.com/phetsimsbackup204/perennial.git perennial-alias
+git clone https://github.com/phetsimsbackup204/phet-core.git
+git clone https://github.com/phetsimsbackup204/phetcommon.git
+git clone https://github.com/phetsimsbackup204/phetmarks.git
+git clone https://github.com/phetsimsbackup204/projectile-motion.git
+git clone https://github.com/phetsimsbackup204/query-string-machine.git
+git clone https://github.com/phetsimsbackup204/scenery.git
+git clone https://github.com/phetsimsbackup204/scenery-phet.git
+git clone https://github.com/phetsimsbackup204/sherpa.git
+git clone https://github.com/phetsimsbackup204/sun.git
+git clone https://github.com/phetsimsbackup204/tambo.git
+git clone https://github.com/phetsimsbackup204/tandem.git
+git clone https://github.com/phetsimsbackup204/twixt.git
+git clone https://github.com/phetsimsbackup204/utterance-queue.git
 ```
 
 (2) Install dev dependencies:
@@ -62,8 +81,8 @@ browser: `http://localhost/projectile-motion/build/adapted-from-phet/projectile-
 
 Join us at the <a href="https://scenerystack.org/community/join/" target="_blank">SceneryStack Community</a>
 
-Help us improve, create a <a href="http://github.com/phetsims/projectile-motion/issues/new" target="_blank">New Issue</a>
+Help us improve, create a <a href="http://github.com/phetsimsbackup204/projectile-motion/issues/new" target="_blank">New Issue</a>
 
 ### License
 
-See the <a href="https://github.com/phetsims/projectile-motion/blob/main/LICENSE" target="_blank">LICENSE</a>
+See the <a href="https://github.com/phetsimsbackup204/projectile-motion/blob/main/LICENSE" target="_blank">LICENSE</a>
