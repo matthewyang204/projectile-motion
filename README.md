@@ -8,10 +8,10 @@ published version,
 
 ### Try it!
 
-<a href="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_en.html" target="_blank">Click here to
+<a href="https://phet-projectile-motion.vercel.app/" target="_blank">Click here to
 run "Projectile Motion".</a>
 
-<a href="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_en.html" target="_blank">
+<a href="https://phet-projectile-motion.vercel.app/" target="_blank">
 <img src="https://raw.githubusercontent.com/phetsimsbackup204/projectile-motion/main/assets/projectile-motion-screenshot.png" alt="Screenshot" style="width: 400px;"/>
 </a>
 
